@@ -1,4 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
+import User from './User';
+import ToDoList from './ToDoList';
 
 const GlobalStyle = createGlobalStyle`
   /* http://meyerweb.com/eric/tools/css/reset/ 
@@ -55,6 +57,7 @@ function App() {
   return (
     <>
       <GlobalStyle />
+      <ToDoList />
     </>
   );
 }
