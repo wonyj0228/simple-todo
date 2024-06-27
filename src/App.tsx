@@ -1,6 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
-import User from './User';
-import ToDoList from './ToDoList';
+import User from './components/User';
+import ToDoList from './components/ToDoList';
 
 const GlobalStyle = createGlobalStyle`
   /* http://meyerweb.com/eric/tools/css/reset/ 
