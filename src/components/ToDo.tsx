@@ -1,5 +1,15 @@
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { Categories, IToDo, toDoState } from '../atoms';
+import styled from 'styled-components';
+
+const Container = styled.li`
+  list-style-type: disc;
+  margin: 7px;
+`;
+
+const Btn = styled.button`
+  margin-left: 10px;
+`;
 
 function ToDo({ text, category, id }: IToDo) {
   const setToDos = useSetRecoilState(toDoState);
@@ -14,30 +24,44 @@ function ToDo({ text, category, id }: IToDo) {
     setToDos((toDos) => {
       const idx = toDos.findIndex((todo) => todo.id === id);
       const newToDo = { text, id, category: name as Categories };
-      console.log(newToDo);
-      return [...toDos.slice(0, idx), newToDo, ...toDos.slice(idx + 1)];
+      const upDateVal = [
+        ...toDos.slice(0, idx),
+        newToDo,
+        ...toDos.slice(idx + 1),
+      ];
+      localStorage.setItem('todo', JSON.stringify(upDateVal));
+      return upDateVal;
+    });
+  };
+
+  const onDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setToDos((toDos) => {
+      const newToDos = toDos.filter((toDo) => toDo.id !== id);
+      localStorage.setItem('todo', JSON.stringify(newToDos));
+      return newToDos;
     });
   };
 
   return (
-    <li>
+    <Container>
       {text}
       {category !== Categories.DOING && (
-        <button name={Categories.DOING} onClick={onClick}>
-          Doing
-        </button>
+        <Btn name={Categories.DOING} onClick={onClick}>
+          진행중
+        </Btn>
       )}
       {category !== Categories.TO_DO && (
-        <button name={Categories.TO_DO} onClick={onClick}>
-          To Do
-        </button>
+        <Btn name={Categories.TO_DO} onClick={onClick}>
+          진행예정
+        </Btn>
       )}
       {category !== Categories.DONE && (
-        <button name={Categories.DONE} onClick={onClick}>
-          Done
-        </button>
+        <Btn name={Categories.DONE} onClick={onClick}>
+          완료
+        </Btn>
       )}
-    </li>
+      <Btn onClick={onDelete}>❌</Btn>
+    </Container>
   );
 }
 
