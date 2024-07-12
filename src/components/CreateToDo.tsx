@@ -10,7 +10,7 @@ const Form = styled.form`
 `;
 
 const TodoInput = styled.input`
-  margin-top: 20px;
+  margin-top: 30px;
   width: 70%;
   font-size: 20px;
   font-family: 'Noto Sans KR', sans-serif;
@@ -36,7 +36,7 @@ interface IForm {
 function CreateToDo() {
   const { register, handleSubmit, setValue } = useForm<IForm>();
   const [toDos, setToDos] = useRecoilState(toDoState);
-  const category = useRecoilValue(categoryState);
+  const { category } = useRecoilValue(categoryState);
 
   const onValid = ({ toDo }: IForm) => {
     setToDos((oldToDos) => {

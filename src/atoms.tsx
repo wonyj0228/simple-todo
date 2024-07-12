@@ -27,21 +27,31 @@ Enums
 
 */
 
+/*
 export enum Categories {
   'TO_DO' = 'TO_DO',
   'DOING' = 'DOING',
   'DONE' = 'DONE',
 }
+*/
 
 export interface IToDo {
   text: string;
   id: number;
-  category: Categories;
+  category: string;
 }
 
-export const categoryState = atom<Categories>({
-  key: 'category',
-  default: Categories.TO_DO,
+export interface ICategory {
+  list: { [key: string]: string };
+  category: string;
+}
+
+export const categoryState = atom<ICategory>({
+  key: 'categoryList',
+  default: {
+    list: { TO_DO: '진행예정', DOING: '진행중', DONE: '완료' },
+    category: 'TO_DO',
+  },
 });
 
 const localData =
@@ -55,7 +65,7 @@ export const toDoSelector = selector({
   key: 'toDoSelector',
   get: ({ get }) => {
     const toDos = get(toDoState);
-    const category = get(categoryState);
+    const { category } = get(categoryState);
 
     return toDos.filter((toDo) => toDo.category === category);
   },

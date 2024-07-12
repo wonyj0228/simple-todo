@@ -1,5 +1,5 @@
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { Categories, IToDo, toDoState } from '../atoms';
+import { categoryState, IToDo, toDoState } from '../atoms';
 import styled from 'styled-components';
 
 const Container = styled.li`
@@ -13,6 +13,7 @@ const Btn = styled.button`
 
 function ToDo({ text, category, id }: IToDo) {
   const setToDos = useSetRecoilState(toDoState);
+  const [{ list }] = useRecoilState(categoryState);
 
   const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     const {
@@ -23,7 +24,7 @@ function ToDo({ text, category, id }: IToDo) {
     // 따라서 새로운 배열을 return해줘야함. -> 기존의 state는 Immutability(불변)
     setToDos((toDos) => {
       const idx = toDos.findIndex((todo) => todo.id === id);
-      const newToDo = { text, id, category: name as Categories };
+      const newToDo = { text, id, category: name };
       const upDateVal = [
         ...toDos.slice(0, idx),
         newToDo,
@@ -45,18 +46,18 @@ function ToDo({ text, category, id }: IToDo) {
   return (
     <Container>
       {text}
-      {category !== Categories.DOING && (
-        <Btn name={Categories.DOING} onClick={onClick}>
+      {category !== 'DOING' && (
+        <Btn name="DOING" onClick={onClick}>
           진행중
         </Btn>
       )}
-      {category !== Categories.TO_DO && (
-        <Btn name={Categories.TO_DO} onClick={onClick}>
+      {category !== 'TO_DO' && (
+        <Btn name="TO_DO" onClick={onClick}>
           진행예정
         </Btn>
       )}
-      {category !== Categories.DONE && (
-        <Btn name={Categories.DONE} onClick={onClick}>
+      {category !== 'DONE' && (
+        <Btn name="DONE" onClick={onClick}>
           완료
         </Btn>
       )}

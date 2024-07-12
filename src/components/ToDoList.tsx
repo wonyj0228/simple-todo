@@ -1,8 +1,9 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
 import CreateToDo from './CreateToDo';
-import { Categories, categoryState, toDoSelector, toDoState } from '../atoms';
+import { categoryState, toDoSelector } from '../atoms';
 import ToDo from './ToDo';
 import styled from 'styled-components';
+import { useForm } from 'react-hook-form';
 
 const Container = styled.div`
   margin: 0 auto;
@@ -27,12 +28,30 @@ const CategorySelect = styled.select`
   text-align: center;
 `;
 
+const Form = styled.form`
+  width: 100%;
+`;
+const CreateCategory = styled.input`
+  margin-top: 10px;
+  width: 100%;
+  height: 50px;
+  box-sizing: border-box;
+
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+`;
+
 const ToDosBox = styled.div`
   margin-top: 70px;
   padding: 30px 20px;
   border: 1px solid gray;
   border-radius: 10px;
 `;
+
+interface IForm {
+  newCategory: string;
+}
 
 function ToDoList() {
   // const toDos = useRecoilValue(toDoState);
@@ -41,20 +60,46 @@ function ToDoList() {
   const toDos = useRecoilValue(toDoSelector);
   // useRecoilState : atom의 value 와 value를 수정할 수 있는 함수를 반환
   const [category, setCategory] = useRecoilState(categoryState);
+  const { register, handleSubmit, setValue } = useForm<IForm>();
 
   const onInput = (e: React.FormEvent<HTMLSelectElement>) => {
-    setCategory(e.currentTarget.value as Categories);
+    setCategory((prev) => {
+      const newCategory = { list: prev.list, category: e.currentTarget.value };
+      return newCategory;
+    });
+  };
+
+  const onValid = ({ newCategory }: IForm) => {
+    setCategory((prevCategory) => {
+      const newObj = {
+        list: { ...prevCategory.list },
+        category: newCategory,
+      };
+      newObj.list[Date.now()] = newCategory;
+      return newObj;
+    });
+    setValue('newCategory', '');
   };
 
   return (
     <Container>
       <Title>To Dos</Title>
 
-      <CategorySelect value={category} onInput={onInput}>
-        <option value={Categories.TO_DO}>진행예정</option>
-        <option value={Categories.DOING}>진행중</option>
-        <option value={Categories.DONE}>완료</option>
+      <CategorySelect value={category.category} onInput={onInput}>
+        {Object.keys(category.list).map((categoryKey) => {
+          return (
+            <option key={categoryKey} value={categoryKey}>
+              {category.list[categoryKey]}
+            </option>
+          );
+        })}
       </CategorySelect>
+      <Form onSubmit={handleSubmit(onValid)}>
+        <CreateCategory
+          {...register('newCategory', { required: 'Please Write a Category' })}
+          placeholder="Custom Category"
+        />
+      </Form>
 
       <CreateToDo />
       <ToDosBox>
